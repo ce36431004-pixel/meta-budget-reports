@@ -4,7 +4,7 @@
 
 const DECISIONS_SHEET = 'Decisions';
 const CRITERIA_SHEET = 'Criteria';
-const DECISIONS_HEADER = ['reportId', 'itemId', 'itemName', 'decision', 'decidedAt', 'entityType', 'currentBudgetKRW', 'proposedBudgetKRW', 'executedAt'];
+const DECISIONS_HEADER = ['reportId', 'itemId', 'itemName', 'decision', 'decidedAt', 'entityType', 'currentBudgetKRW', 'proposedBudgetKRW', 'confirmedBudgetKRW', 'executedAt'];
 
 function getSpreadsheet_() {
   const props = PropertiesService.getScriptProperties();
@@ -52,9 +52,9 @@ function doGet(e) {
     const rows = sheet.getDataRange().getValues();
     const result = {};
     for (let i = 1; i < rows.length; i++) {
-      const [rId, itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, executedAt] = rows[i];
+      const [rId, itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW, executedAt] = rows[i];
       if (rId === reportId) {
-        result[itemId] = { itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, executedAt: executedAt || null };
+        result[itemId] = { itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW, executedAt: executedAt || null };
       }
     }
     return json_(result);
@@ -84,28 +84,28 @@ function doPost(e) {
     if (body.markExecuted) {
       for (let i = 1; i < rows.length; i++) {
         if (rows[i][0] === reportId && rows[i][1] === itemId) {
-          sheet.getRange(i + 1, 9).setValue(new Date().toISOString());
+          sheet.getRange(i + 1, 10).setValue(new Date().toISOString());
           return json_({ ok: true, executed: true });
         }
       }
       return json_({ error: '해당 항목을 찾을 수 없습니다' });
     }
 
-    // 일반 저장 (드롭다운 선택)
-    const { itemName, decision, entityType, currentBudgetKRW, proposedBudgetKRW } = body;
+    // 일반 저장 (확정 예산 입력/변경 시 자동 호출됨)
+    const { itemName, decision, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW } = body;
     if (!decision) return json_({ error: 'decision은 필수입니다' });
     const decidedAt = new Date().toISOString();
-    const rowValues = [itemName || '', decision, decidedAt, entityType || '', currentBudgetKRW ?? '', proposedBudgetKRW ?? '', ''];
+    const rowValues = [itemName || '', decision, decidedAt, entityType || '', currentBudgetKRW ?? '', proposedBudgetKRW ?? '', confirmedBudgetKRW ?? '', ''];
     let updated = false;
     for (let i = 1; i < rows.length; i++) {
       if (rows[i][0] === reportId && rows[i][1] === itemId) {
-        sheet.getRange(i + 1, 3, 1, 7).setValues([rowValues]);
+        sheet.getRange(i + 1, 3, 1, 8).setValues([rowValues]);
         updated = true;
         break;
       }
     }
     if (!updated) sheet.appendRow([reportId, itemId, ...rowValues]);
-    return json_({ ok: true, saved: { itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW } });
+    return json_({ ok: true, saved: { itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW } });
   }
 
   return json_({ error: 'type 필드가 필요합니다 (criteria 또는 decisions)' });
