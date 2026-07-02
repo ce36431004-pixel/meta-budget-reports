@@ -58,27 +58,27 @@
   <table>
     <thead><tr><th>광고세트명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th class="num">구매</th><th class="num">매출</th><th class="num">ROAS</th><th>규칙상 판정</th><th class="num">제안 예산</th><th class="decision-col">담당자 확정</th></tr></thead>
     <tbody id="table1-body">
-      <tr data-item-id="120250291064200416" data-item-name="260605_영상_늘이동PA">
+      <tr data-item-id="120250291064200416" data-item-name="260605_영상_늘이동PA" data-entity-type="ad_set" data-current-budget="200000" data-proposed-budget="170000">
         <td>260605_131_영상_늘이동PA</td><td class="num">200,000</td><td class="num">564,311</td><td class="num">37건</td><td class="num">954,254</td><td class="num">1.69</td><td><span class="tag tag-down">감액</span></td><td class="num">170,000</td>
         <td class="decision-col"></td>
       </tr>
-      <tr data-item-id="120250927474150416" data-item-name="260612_영상_미니속보디(훈)">
+      <tr data-item-id="120250927474150416" data-item-name="260612_영상_미니속보디(훈)" data-entity-type="ad_set" data-current-budget="200000" data-proposed-budget="240000">
         <td>260612_131_영상_미니속보디(훈)</td><td class="num">200,000</td><td class="num">418,266</td><td class="num">48건</td><td class="num">1,238,534</td><td class="num">2.96</td><td><span class="tag tag-up">증액</span></td><td class="num">240,000</td>
         <td class="decision-col"></td>
       </tr>
-      <tr data-item-id="120251429828570416" data-item-name="260618_배너_올포기기획(조)">
+      <tr data-item-id="120251429828570416" data-item-name="260618_배너_올포기기획(조)" data-entity-type="ad_set" data-current-budget="100000" data-proposed-budget="120000">
         <td>260618_131_배너_올포기기획(조)</td><td class="num">100,000</td><td class="num">244,104</td><td class="num">23건</td><td class="num">602,100</td><td class="num">2.47</td><td><span class="tag tag-up">증액</span></td><td class="num">120,000</td>
         <td class="decision-col"></td>
       </tr>
-      <tr data-item-id="120251429828580416" data-item-name="260618_영상_호미니동디(조)(훈)(세)(나)">
+      <tr data-item-id="120251429828580416" data-item-name="260618_영상_호미니동디(조)(훈)(세)(나)" data-entity-type="ad_set" data-current-budget="100000" data-proposed-budget="85000">
         <td>260618_131_영상_호미니동디(조)(훈)(세)(나)</td><td class="num">100,000</td><td class="num">228,443</td><td class="num">14건</td><td class="num">354,600</td><td class="num">1.55</td><td><span class="tag tag-down">감액</span></td><td class="num">85,000</td>
         <td class="decision-col"></td>
       </tr>
-      <tr data-item-id="120251181354810416" data-item-name="260615_영상_아도미니디(유)(훈)(세)(나)(조)">
+      <tr data-item-id="120251181354810416" data-item-name="260615_영상_아도미니디(유)(훈)(세)(나)(조)" data-entity-type="ad_set" data-current-budget="100000" data-proposed-budget="120000">
         <td>260615_131_영상_아도미니디(유)(훈)(세)(나)(조)</td><td class="num">100,000</td><td class="num">224,718</td><td class="num">21건</td><td class="num">526,669</td><td class="num">2.34</td><td><span class="tag tag-up">증액</span></td><td class="num">120,000</td>
         <td class="decision-col"></td>
       </tr>
-      <tr data-item-id="120249394803440416" data-item-name="260528_영상_제발여기서사올영">
+      <tr data-item-id="120249394803440416" data-item-name="260528_영상_제발여기서사올영" data-entity-type="ad_set" data-current-budget="50000" data-proposed-budget="42500">
         <td>260528_131_영상_제발여기서사올영</td><td class="num">50,000</td><td class="num">116,380</td><td class="num">6건</td><td class="num">152,400</td><td class="num">1.31</td><td><span class="tag tag-down">감액</span></td><td class="num">42,500</td>
         <td class="decision-col"></td>
       </tr>
@@ -176,7 +176,10 @@ function buildSelect(row) {
           reportId: REPORT_ID,
           itemId: row.dataset.itemId,
           itemName: row.dataset.itemName,
-          decision: select.value
+          decision: select.value,
+          entityType: row.dataset.entityType || '',
+          currentBudgetKRW: row.dataset.currentBudget || '',
+          proposedBudgetKRW: row.dataset.proposedBudget || ''
         })
       });
       const data = await res.json();

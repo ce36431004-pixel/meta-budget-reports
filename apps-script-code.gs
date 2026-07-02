@@ -1,9 +1,10 @@
 // 이 코드를 Google Apps Script(script.google.com)에 붙여넣고 웹앱으로 배포하세요.
 // 별도로 시트를 미리 만들 필요 없음 — 처음 실행될 때 스프레드시트를 자동으로 생성합니다.
-// 기준 입력 사이트(criteria)와 리포트 담당자 판단(decisions) 저장을 모두 이 스크립트 하나로 처리합니다.
+// 기준 입력 사이트(criteria), 리포트 담당자 판단(decisions), 실행 여부(executedAt)를 모두 이 스크립트 하나로 처리합니다.
 
 const DECISIONS_SHEET = 'Decisions';
 const CRITERIA_SHEET = 'Criteria';
+const DECISIONS_HEADER = ['reportId', 'itemId', 'itemName', 'decision', 'decidedAt', 'entityType', 'currentBudgetKRW', 'proposedBudgetKRW', 'executedAt'];
 
 function getSpreadsheet_() {
   const props = PropertiesService.getScriptProperties();
@@ -20,6 +21,12 @@ function getSheet_(name, headerRow) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     sheet.appendRow(headerRow);
+  } else {
+    // 기존 시트에 새 컬럼이 추가된 경우 헤더만 안전하게 확장 (기존 데이터는 건드리지 않음)
+    const existingHeader = sheet.getRange(1, 1, 1, headerRow.length).getValues()[0];
+    if (headerRow.some((h, i) => existingHeader[i] !== h)) {
+      sheet.getRange(1, 1, 1, headerRow.length).setValues([headerRow]);
+    }
   }
   return sheet;
 }
@@ -41,12 +48,14 @@ function doGet(e) {
 
   if (type === 'decisions') {
     const reportId = e.parameter.reportId;
-    const sheet = getSheet_(DECISIONS_SHEET, ['reportId', 'itemId', 'itemName', 'decision', 'decidedAt']);
+    const sheet = getSheet_(DECISIONS_SHEET, DECISIONS_HEADER);
     const rows = sheet.getDataRange().getValues();
     const result = {};
     for (let i = 1; i < rows.length; i++) {
-      const [rId, itemId, itemName, decision, decidedAt] = rows[i];
-      if (rId === reportId) result[itemId] = { itemName, decision, decidedAt };
+      const [rId, itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, executedAt] = rows[i];
+      if (rId === reportId) {
+        result[itemId] = { itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, executedAt: executedAt || null };
+      }
     }
     return json_(result);
   }
@@ -66,21 +75,37 @@ function doPost(e) {
   }
 
   if (body.type === 'decisions') {
-    const { reportId, itemId, itemName, decision } = body;
-    if (!reportId || !itemId || !decision) return json_({ error: 'reportId, itemId, decision은 필수입니다' });
-    const sheet = getSheet_(DECISIONS_SHEET, ['reportId', 'itemId', 'itemName', 'decision', 'decidedAt']);
+    const { reportId, itemId } = body;
+    if (!reportId || !itemId) return json_({ error: 'reportId, itemId는 필수입니다' });
+    const sheet = getSheet_(DECISIONS_SHEET, DECISIONS_HEADER);
     const rows = sheet.getDataRange().getValues();
+
+    // 실행 완료 표시만 하는 호출 (executedAt만 옴, decision 등은 안 건드림)
+    if (body.markExecuted) {
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][0] === reportId && rows[i][1] === itemId) {
+          sheet.getRange(i + 1, 9).setValue(new Date().toISOString());
+          return json_({ ok: true, executed: true });
+        }
+      }
+      return json_({ error: '해당 항목을 찾을 수 없습니다' });
+    }
+
+    // 일반 저장 (드롭다운 선택)
+    const { itemName, decision, entityType, currentBudgetKRW, proposedBudgetKRW } = body;
+    if (!decision) return json_({ error: 'decision은 필수입니다' });
     const decidedAt = new Date().toISOString();
+    const rowValues = [itemName || '', decision, decidedAt, entityType || '', currentBudgetKRW ?? '', proposedBudgetKRW ?? '', ''];
     let updated = false;
     for (let i = 1; i < rows.length; i++) {
       if (rows[i][0] === reportId && rows[i][1] === itemId) {
-        sheet.getRange(i + 1, 3, 1, 3).setValues([[itemName || '', decision, decidedAt]]);
+        sheet.getRange(i + 1, 3, 1, 7).setValues([rowValues]);
         updated = true;
         break;
       }
     }
-    if (!updated) sheet.appendRow([reportId, itemId, itemName || '', decision, decidedAt]);
-    return json_({ ok: true, saved: { itemId, itemName, decision, decidedAt } });
+    if (!updated) sheet.appendRow([reportId, itemId, ...rowValues]);
+    return json_({ ok: true, saved: { itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW } });
   }
 
   return json_({ error: 'type 필드가 필요합니다 (criteria 또는 decisions)' });
