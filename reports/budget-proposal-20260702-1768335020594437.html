@@ -170,11 +170,10 @@
   </div>
 </div>
 
+<script src="../config.js"></script>
 <script>
 const REPORT_ID = 'budget-proposal-20260702-1768335020594437';
 const DECISION_OPTIONS = ['(선택 안 함)', '증액', '감액', '유지', 'OFF', '보류'];
-// Apps Script 배포 후 이 URL을 실제 웹앱 URL로 교체하세요. (criteria.html과 동일한 URL)
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMjM0avEznGY-F3vP-N9s8vg2jc6qkKv6KCfSn85G_zooIXoKtDJVJbIhYcaFYjsi1Fw/exec';
 
 function buildSelect(row) {
   const td = row.querySelector('.decision-col');
