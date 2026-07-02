@@ -40,7 +40,7 @@
 
   <div class="note">
     ℹ️ <b>v4 대비 수정 사항</b><br>
-    "논타겟 자동 제안", "참고용 데이터", "소재 OFF 제안" 표 모두에 드롭다운을 추가해서, 담당자가 최종 판단한 결과(증액/감액/유지/OFF/보류)를 그 자리에서 선택하면 자동 저장됩니다. 규칙상 판정은 참고용이고, 실제 실행 여부는 담당자 드롭다운 선택이 기준입니다. 저장된 선택은 이 페이지를 다시 열어도 남아있고, 팀장님이 나중에 확인할 수 있습니다. <b>이 저장 기능은 `criteria-site` 서버(localhost:3000)가 켜져 있어야 동작합니다.</b>
+    "논타겟 자동 제안", "참고용 데이터", "소재 OFF 제안" 표 모두에 드롭다운을 추가해서, 담당자가 최종 판단한 결과(증액/감액/유지/OFF/보류)를 그 자리에서 선택하면 자동 저장됩니다. 규칙상 판정은 참고용이고, 실제 실행 여부는 담당자 드롭다운 선택이 기준입니다. 저장된 선택은 이 페이지를 다시 열어도 남아있고, 팀장님이 나중에 확인할 수 있습니다. (구글 시트에 저장됩니다.)
   </div>
 
   <div class="card">
@@ -174,7 +174,7 @@
 const REPORT_ID = 'budget-proposal-20260702-1768335020594437';
 const DECISION_OPTIONS = ['(선택 안 함)', '증액', '감액', '유지', 'OFF', '보류'];
 // Apps Script 배포 후 이 URL을 실제 웹앱 URL로 교체하세요. (criteria.html과 동일한 URL)
-const APPS_SCRIPT_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMjM0avEznGY-F3vP-N9s8vg2jc6qkKv6KCfSn85G_zooIXoKtDJVJbIhYcaFYjsi1Fw/exec';
 
 function buildSelect(row) {
   const td = row.querySelector('.decision-col');
