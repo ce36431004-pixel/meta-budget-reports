@@ -173,6 +173,8 @@
 <script>
 const REPORT_ID = 'budget-proposal-20260702-1768335020594437';
 const DECISION_OPTIONS = ['(선택 안 함)', '증액', '감액', '유지', 'OFF', '보류'];
+// Apps Script 배포 후 이 URL을 실제 웹앱 URL로 교체하세요. (criteria.html과 동일한 URL)
+const APPS_SCRIPT_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
 function buildSelect(row) {
   const td = row.querySelector('.decision-col');
@@ -194,21 +196,24 @@ function buildSelect(row) {
     mark.textContent = '저장 중...';
     mark.className = 'saved-mark';
     try {
-      const res = await fetch(`/api/decisions/${REPORT_ID}`, {
+      // text/plain으로 보내야 Apps Script에서 CORS preflight 없이 바로 받을 수 있음
+      const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
+          type: 'decisions',
+          reportId: REPORT_ID,
           itemId: row.dataset.itemId,
           itemName: row.dataset.itemName,
           decision: select.value
         })
       });
-      if (!res.ok) throw new Error('save failed');
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
       mark.textContent = `저장됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`;
       mark.className = 'saved-mark ok';
     } catch (e) {
-      mark.textContent = '저장 실패 — criteria-site 서버가 켜져 있는지 확인해주세요';
+      mark.textContent = '저장 실패: ' + e.message;
       mark.className = 'saved-mark';
     }
   });
@@ -222,7 +227,7 @@ async function init() {
   rows.forEach(row => { selects[row.dataset.itemId] = buildSelect(row); });
 
   try {
-    const res = await fetch(`/api/decisions/${REPORT_ID}`);
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=decisions&reportId=${REPORT_ID}`);
     const saved = await res.json();
     rows.forEach(row => {
       const itemId = row.dataset.itemId;
