@@ -48,11 +48,11 @@
   <div class="sub">기준 입력과 지난 리포트를 한 곳에서 관리합니다. Claude에게 "메타 예산 제안해줘"라고 말하면 새 리포트가 여기 아카이브에 자동으로 추가됩니다.</div>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="archive">리포트 아카이브</button>
-    <button class="tab-btn" data-tab="criteria">기준 입력</button>
+    <button class="tab-btn active" data-tab="criteria">기준 입력</button>
+    <button class="tab-btn" data-tab="archive">리포트 아카이브</button>
   </div>
 
-  <div class="tab-panel active" id="panel-archive">
+  <div class="tab-panel" id="panel-archive">
     <div class="card">
       <h2>리포트 아카이브</h2>
       <div class="desc">날짜 최신순으로 정렬됩니다.</div>
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <div class="tab-panel" id="panel-criteria">
+  <div class="tab-panel active" id="panel-criteria">
     <div class="note">
       캠페인/광고세트 이름을 보고 아래 그룹으로 자동 분류해서 그룹마다 다른 방식으로 처리합니다.
       <b>논타겟</b>은 핵심 성과 영역이라 완전 자동 판정, <b>카탈로그</b>는 증액만 자동 판정, <b>장바구니·트래픽·토너·그 외</b>는 데이터만 보여주고 자동 제안은 하지 않습니다 (팀장님/담당자 직접 판단).
