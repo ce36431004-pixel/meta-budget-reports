@@ -40,6 +40,14 @@
   .archive-list li { padding: 10px 0; border-bottom: 1px solid var(--border); }
   .archive-list a { color: var(--text); text-decoration: none; font-size: 14px; }
   .archive-list a:hover { color: var(--accent); text-decoration: underline; }
+  .table-scroll { overflow-x: auto; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .tag-up { background: #dcfce7; color: #16a34a; }
+  .tag-down { background: #fee2e2; color: #dc2626; }
+  .tag-hold { background: #fef9c3; color: #ca8a04; }
+  .tag-off { background: #ffe4e6; color: #7c2d12; }
+  .tag-done { background: #dbeafe; color: #1d4ed8; }
+  .tag-pending { background: #f1f5f9; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -50,6 +58,7 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="criteria">기준 입력</button>
     <button class="tab-btn" data-tab="archive">리포트 아카이브</button>
+    <button class="tab-btn" data-tab="history">실행 이력</button>
   </div>
 
   <div class="tab-panel" id="panel-archive">
@@ -57,6 +66,19 @@
       <h2>리포트 아카이브</h2>
       <div class="desc">날짜 최신순으로 정렬됩니다.</div>
       <div id="archiveContainer">불러오는 중...</div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-history">
+    <div class="card">
+      <h2>실행 이력</h2>
+      <div class="desc">모든 리포트에서 담당자가 확정한 예산/판정과 실제 실행 여부를 최신순으로 보여줍니다.</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>확정 시각</th><th>리포트</th><th>대상</th><th>구분</th><th>현재 예산</th><th>확정 예산</th><th>판정</th><th>실행 여부</th></tr></thead>
+          <tbody id="historyDecisionsBody"><tr><td colspan="8" style="color:#94a3b8">불러오는 중...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -255,8 +277,40 @@ async function loadHistory() {
   `).join('');
 }
 
+function verdictTagHtml(decision) {
+  const cls = { '증액': 'tag-up', '감액': 'tag-down', '유지': 'tag-hold', 'OFF': 'tag-off' }[decision] || 'tag-hold';
+  return `<span class="tag ${cls}">${decision || '-'}</span>`;
+}
+
+async function loadDecisionsHistory() {
+  const tbody = document.getElementById('historyDecisionsBody');
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=decisions&action=all`);
+    const list = await res.json();
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="color:#94a3b8">아직 확정된 결정이 없습니다.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(item => `
+      <tr>
+        <td>${item.decidedAt ? new Date(item.decidedAt).toLocaleString('ko-KR') : '-'}</td>
+        <td><a href="reports/${item.reportId}.html" style="color:var(--accent);">${item.reportId}</a></td>
+        <td>${item.itemName || item.itemId}</td>
+        <td>${item.entityType || '-'}</td>
+        <td>${item.currentBudgetKRW !== '' && item.currentBudgetKRW != null ? Number(item.currentBudgetKRW).toLocaleString() + '원' : '-'}</td>
+        <td>${item.confirmedBudgetKRW !== '' && item.confirmedBudgetKRW != null ? Number(item.confirmedBudgetKRW).toLocaleString() + '원' : '-'}</td>
+        <td>${verdictTagHtml(item.decision)}</td>
+        <td>${item.executedAt ? `<span class="tag tag-done">실행됨 ✓ ${new Date(item.executedAt).toLocaleString('ko-KR')}</span>` : '<span class="tag tag-pending">미실행</span>'}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="8" style="color:#ef4444">이력을 불러오지 못했습니다.</td></tr>';
+  }
+}
+
 loadArchive();
 loadHistory();
+loadDecisionsHistory();
 </script>
 </body>
 </html>

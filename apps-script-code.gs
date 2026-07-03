@@ -47,9 +47,22 @@ function doGet(e) {
   }
 
   if (type === 'decisions') {
-    const reportId = e.parameter.reportId;
     const sheet = getSheet_(DECISIONS_SHEET, DECISIONS_HEADER);
     const rows = sheet.getDataRange().getValues();
+
+    // action=all: 리포트 구분 없이 지금까지의 모든 결정 이력을 최신순으로 반환 ("실행 이력" 탭용)
+    if (e.parameter.action === 'all') {
+      const records = [];
+      for (let i = 1; i < rows.length; i++) {
+        const [reportId, itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW, executedAt] = rows[i];
+        if (!reportId) continue;
+        records.push({ reportId, itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW, executedAt: executedAt || null });
+      }
+      records.sort((a, b) => (b.decidedAt || '').localeCompare(a.decidedAt || ''));
+      return json_(records);
+    }
+
+    const reportId = e.parameter.reportId;
     const result = {};
     for (let i = 1; i < rows.length; i++) {
       const [rId, itemId, itemName, decision, decidedAt, entityType, currentBudgetKRW, proposedBudgetKRW, confirmedBudgetKRW, executedAt] = rows[i];
