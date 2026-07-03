@@ -7,35 +7,43 @@
 <style>
   :root { --accent: #2563eb; --bg: #f8fafc; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; --up: #16a34a; --down: #dc2626; --hold: #ca8a04; --off:#7c2d12; --ref:#475569; }
   * { box-sizing: border-box; }
-  body { font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 32px 16px; }
-  .wrap { max-width: 1120px; margin: 0 auto; }
-  h1 { font-size: 22px; margin-bottom: 4px; }
-  h2 { font-size: 16px; margin: 32px 0 12px; }
-  .sub { color: var(--muted); font-size: 14px; }
-  .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
-  .note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1e3a8a; margin: 16px 0 24px; line-height: 1.6; }
-  .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 13px; }
-  .criteria-grid div { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
-  .criteria-grid b { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { border-bottom: 1px solid var(--border); padding: 8px 6px; text-align: left; vertical-align: top; }
-  th { color: var(--muted); font-weight: 600; background: var(--bg); }
-  td.num, th.num { text-align: right; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  body { font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1160px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 16px; margin: 40px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--text); display: inline-block; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
+  .note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px 18px; font-size: 13.5px; color: #1e3a8a; margin: 18px 0 28px; line-height: 1.7; }
+  .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; font-size: 13.5px; }
+  .criteria-grid div { background: var(--bg); border-radius: 10px; padding: 12px 14px; line-height: 1.5; }
+  .criteria-grid b { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 640px; }
+  th, td { border-bottom: 1px solid var(--border); padding: 11px 12px; text-align: left; vertical-align: middle; }
+  thead th { color: var(--muted); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f8fafc; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
   .tag-up { background: #dcfce7; color: var(--up); }
   .tag-down { background: #fee2e2; color: var(--down); }
   .tag-hold { background: #fef9c3; color: var(--hold); }
   .tag-off { background: #ffe4e6; color: var(--off); }
   .tag-ref { background: #e2e8f0; color: var(--ref); }
-  .foot { margin-top: 32px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 16px; }
-  select.decision { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
-  .saved-mark { font-size: 12px; color: var(--muted); margin-left: 6px; }
+
+  .foot { margin-top: 40px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 18px; line-height: 1.7; }
+  select.decision { padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: #fff; }
+  .saved-mark { display: block; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
   .saved-mark.ok { color: var(--up); }
   .decision-col { min-width: 190px; }
-  input.confirm-budget { width: 100px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; text-align: right; }
-  .verdict-col { min-width: 170px; }
-  .confirm-btn { background: var(--accent, #2563eb); color: #fff; border: none; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
-  .confirm-btn:hover { opacity: 0.9; }
+
+  .confirm-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  input.confirm-budget { width: 110px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 8px; font-size: 13.5px; text-align: right; font-variant-numeric: tabular-nums; }
+  .verdict-col { min-width: 180px; }
+  .confirm-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .confirm-btn:hover { background: #1d4ed8; }
 </style>
 </head>
 <body>
@@ -59,6 +67,7 @@
   </div>
 
   <h2>표 1. 논타겟 — 자동 제안 (핵심)</h2>
+  <div class="table-scroll">
   <table>
     <thead><tr><th>광고세트명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th class="num">구매</th><th class="num">매출</th><th class="num">ROAS</th><th>규칙상 판정</th><th class="num">제안 예산</th><th class="num">확정 예산</th><th class="verdict-col">최종 판정</th></tr></thead>
     <tbody id="table1-body">
@@ -88,9 +97,11 @@
       </tr>
     </tbody>
   </table>
+  </div>
   <div class="sub" style="margin-top:8px;">확정 예산은 기본으로 제안 예산이 채워져 있습니다. 다른 값으로 바꾸고 싶으면 직접 수정하세요 — 최종 판정은 (확정 예산 vs 현재 예산)을 비교해서 자동으로 계산됩니다.</div>
 
   <h2>표 2. 카탈로그 — 자동 제안</h2>
+  <div class="table-scroll">
   <table>
     <thead><tr><th>캠페인명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th class="num">구매</th><th class="num">매출</th><th class="num">ROAS</th><th>판정</th><th class="num">제안 예산</th><th class="num">확정 예산</th><th class="verdict-col">최종 판정</th></tr></thead>
     <tbody id="table2-body">
@@ -100,9 +111,11 @@
       </tr>
     </tbody>
   </table>
+  </div>
   <div class="sub" style="margin-top:8px;">ROAS 3.30으로 기준(4.0) 근접했으나 미달 — 증액하지 않았습니다.</div>
 
   <h2>표 3. 참고용 데이터 (장바구니 · 트래픽 · 토너 · 기타) — 직접 판단해주세요</h2>
+  <div class="table-scroll">
   <table>
     <thead><tr><th>그룹</th><th>캠페인·세트명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th>결과</th><th class="num">ROAS/매출</th><th class="decision-col">담당자 판단</th></tr></thead>
     <tbody id="table3-body">
@@ -124,17 +137,21 @@
       </tr>
     </tbody>
   </table>
+  </div>
   <div class="sub" style="margin-top:8px;">*장바구니 담긴 상품가는 실제 매출이 아닙니다 (참고용 추정치).</div>
 
   <h2>표 4. 소재(광고) OFF 제안</h2>
   <div class="sub" style="margin-bottom:8px;">지출 40,000원 이상 & 구매 0건인 소재가 이번 기간엔 없었습니다. (0건인 소재는 모두 지출 27,900원 이하로 최소 지출액 미달)</div>
+  <div class="table-scroll">
   <table>
     <thead><tr><th>소재명</th><th>소속 세트</th><th class="num">3일 지출</th><th class="num">구매</th><th>OFF 제안</th></tr></thead>
     <tbody id="table4-body">
     </tbody>
   </table>
+  </div>
 
   <h2>판단 제외 목록</h2>
+  <div class="table-scroll">
   <table>
     <thead><tr><th>대상</th><th>그룹</th><th>제외 사유</th></tr></thead>
     <tbody>
@@ -144,6 +161,7 @@
       <tr><td>260615_WA유리내돈내산ver1(조)</td><td>트래픽</td><td>지출 45,710원 (최소 지출액 50,000원 미달)</td></tr>
     </tbody>
   </table>
+  </div>
 
   <div class="foot">
     이 리포트는 제안입니다. 실제 예산 변경/OFF는 Ads Manager에서 직접 진행해주세요.<br>
@@ -189,10 +207,11 @@ function buildBudgetConfirm(row) {
   const mark = document.createElement('span');
   mark.className = 'saved-mark';
 
-  verdictTd.appendChild(badge);
-  verdictTd.appendChild(document.createTextNode(' '));
-  verdictTd.appendChild(confirmBtn);
-  verdictTd.appendChild(document.createElement('br'));
+  const confirmRow = document.createElement('div');
+  confirmRow.className = 'confirm-row';
+  confirmRow.appendChild(badge);
+  confirmRow.appendChild(confirmBtn);
+  verdictTd.appendChild(confirmRow);
   verdictTd.appendChild(mark);
 
   function render() {
