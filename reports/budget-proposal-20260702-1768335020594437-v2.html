@@ -34,6 +34,8 @@
   .decision-col { min-width: 190px; }
   input.confirm-budget { width: 100px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; text-align: right; }
   .verdict-col { min-width: 170px; }
+  .confirm-btn { background: var(--accent, #2563eb); color: #fff; border: none; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .confirm-btn:hover { opacity: 0.9; }
 </style>
 </head>
 <body>
@@ -145,7 +147,7 @@
 
   <div class="foot">
     이 리포트는 제안입니다. 실제 예산 변경/OFF는 Ads Manager에서 직접 진행해주세요.<br>
-    표 1·2의 "확정 예산"은 값을 바꾸면(포커스를 벗어나면) 자동 저장되고, "최종 판정"은 확정 예산과 현재 예산을 비교해 자동으로 계산됩니다. 표 3·4의 담당자 판단 드롭다운은 선택 즉시 저장됩니다.
+    표 1·2에서 "확정 예산"을 입력하면 "최종 판정" 배지가 실시간으로 바뀌지만, <b>"확인" 버튼을 눌러야 실제로 저장</b>됩니다. 표 3·4의 담당자 판단 드롭다운은 선택 즉시 저장됩니다.
   </div>
 </div>
 
@@ -179,17 +181,31 @@ function buildBudgetConfirm(row) {
   input.value = proposed;
   confirmTd.appendChild(input);
 
+  const badge = document.createElement('span'); // 배지를 담는 고정 컨테이너 (내용만 갈아끼움)
+  const confirmBtn = document.createElement('button');
+  confirmBtn.type = 'button';
+  confirmBtn.className = 'confirm-btn';
+  confirmBtn.textContent = '확인';
   const mark = document.createElement('span');
   mark.className = 'saved-mark';
 
+  verdictTd.appendChild(badge);
+  verdictTd.appendChild(document.createTextNode(' '));
+  verdictTd.appendChild(confirmBtn);
+  verdictTd.appendChild(document.createElement('br'));
+  verdictTd.appendChild(mark);
+
   function render() {
     const confirmed = Number(input.value);
-    verdictTd.innerHTML = verdictTag(computeVerdict(current, confirmed)) + '<br>';
-    verdictTd.appendChild(mark);
+    badge.innerHTML = verdictTag(computeVerdict(current, confirmed));
   }
   render();
 
-  input.addEventListener('change', async () => {
+  // 입력값 바꿀 때는 배지만 실시간으로 갱신 (아직 저장 안 함)
+  input.addEventListener('input', render);
+
+  // "확인" 버튼을 눌러야 실제로 저장됨
+  confirmBtn.addEventListener('click', async () => {
     render();
     mark.textContent = '저장 중...';
     mark.className = 'saved-mark';
@@ -212,13 +228,12 @@ function buildBudgetConfirm(row) {
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      mark.textContent = `저장됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`;
+      mark.textContent = `확인됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`;
       mark.className = 'saved-mark ok';
     } catch (e) {
       mark.textContent = '저장 실패: ' + e.message;
       mark.className = 'saved-mark';
     }
-    render();
   });
 
   input.renderOnly = render;
