@@ -69,11 +69,12 @@
   .saved-mark.ok { color: var(--success); font-weight: 500; }
   .decision-col { min-width: 190px; }
 
-  .confirm-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  input.confirm-budget { width: 112px; height: 38px; padding: 0 11px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13.5px; font-family: var(--font); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .confirm-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+  input.confirm-budget { width: 112px; height: 30px; padding: 0 11px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13.5px; font-family: var(--font); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
   input.confirm-budget:focus { outline: none; border: 2px solid var(--fb-blue); padding: 0 10px; }
   .verdict-col { min-width: 180px; }
-  .confirm-btn { background: var(--primary); color: #fff; border: none; border-radius: var(--r-full); padding: 5px 14px; font-size: 12px; font-weight: 700; font-family: var(--font); letter-spacing: -0.01em; line-height: 1.4; cursor: pointer; transition: background .15s ease-out; }
+  .verdict-col .tag { height: 30px; display: inline-flex; align-items: center; padding: 0 13px; }
+  .confirm-btn { height: 30px; display: inline-flex; align-items: center; background: var(--primary); color: #fff; border: none; border-radius: var(--r-full); padding: 0 16px; font-size: 12px; font-weight: 700; font-family: var(--font); letter-spacing: -0.01em; cursor: pointer; transition: background .15s ease-out; }
   .confirm-btn:hover { background: var(--primary-deep); }
   .confirm-btn:active { background: var(--primary-deep); }
 
