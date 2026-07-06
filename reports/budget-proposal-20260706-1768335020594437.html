@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>메타 예산 제안 리포트 (2026-07-06) - #퍼4팀_셀라딕스_협력광고_이삼오구</title>
+<script src="../config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0064e0;
+    --primary-deep: #0457cb;
+    --fb-blue: #1876f2;
+    --ink-button: #000000;
+    --canvas: #ffffff;
+    --surface-soft: #f1f4f7;
+    --ink-deep: #0a1317;
+    --ink: #1c1e21;
+    --charcoal: #444950;
+    --steel: #5d6c7b;
+    --stone: #8595a4;
+    --hairline: #ced0d4;
+    --hairline-soft: #dee3e9;
+    --success: #31a24c;
+    --attention: #f2a918;
+    --critical: #e41e3f;
+    /* aliases kept for existing references */
+    --accent: #0064e0; --bg: #f1f4f7; --border: #dee3e9; --text: #1c1e21; --muted: #5d6c7b;
+    --up: #31a24c; --down: #f2a918; --hold: #5d6c7b; --off: #e41e3f; --ref: #5d6c7b;
+    --r-lg: 8px; --r-xl: 16px; --r-full: 100px;
+    --font: 'Montserrat', 'Noto Sans KR', -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--canvas); color: var(--ink-deep); margin: 0; padding: 44px 20px 80px; line-height: 1.5; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
+  .wrap { max-width: 1160px; margin: 0 auto; }
+  .brand-chip { display: inline-flex; align-items: center; gap: 7px; background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 13px; border-radius: var(--r-full); margin-bottom: 16px; }
+  .brand-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; opacity: .9; }
+  h1 { font-size: 30px; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.02em; line-height: 1.16; }
+  h2 { font-size: 20px; font-weight: 700; margin: 44px 0 14px; letter-spacing: -0.01em; }
+  .sub { color: var(--steel); font-size: 14px; margin-bottom: 8px; line-height: 1.55; }
+  .card { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); padding: 24px 26px; margin-bottom: 24px; }
+  .note { background: rgba(0, 100, 224, 0.06); border: 1px solid rgba(0, 100, 224, 0.18); border-radius: var(--r-xl); padding: 16px 18px; font-size: 13.5px; color: #143f7a; margin: 20px 0 28px; line-height: 1.7; }
+  .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 13.5px; }
+  .criteria-grid > div { background: var(--surface-soft); border-radius: var(--r-lg); padding: 13px 15px; line-height: 1.5; }
+  .criteria-grid b { display: block; font-size: 11px; color: var(--steel); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); background: var(--canvas); width: fit-content; max-width: 100%; }
+  table { width: auto; border-collapse: collapse; font-size: 13.5px; table-layout: auto; }
+  th, td { border-bottom: 1px solid var(--hairline-soft); padding: 12px 15px; text-align: left; vertical-align: middle; white-space: nowrap; }
+  thead th { color: var(--steel); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; background: var(--surface-soft); border-bottom: 1px solid var(--hairline-soft); position: sticky; top: 0; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-soft); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .tag { display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: var(--r-full); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .tag-up { background: var(--success); color: #fff; }
+  .tag-down { background: var(--attention); color: #fff; }
+  .tag-hold { background: var(--surface-soft); color: var(--steel); }
+  .tag-off { background: var(--critical); color: #fff; }
+  .tag-ref { background: var(--surface-soft); color: var(--steel); }
+
+  .foot { margin-top: 44px; font-size: 13px; color: var(--steel); border-top: 1px solid var(--hairline-soft); padding-top: 20px; line-height: 1.7; }
+  .foot b { color: var(--charcoal); }
+  select.decision { padding: 8px 12px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13px; font-family: var(--font); background: var(--canvas); color: var(--ink); cursor: pointer; }
+  select.decision:focus { outline: none; border: 2px solid var(--fb-blue); }
+  .saved-mark { display: block; font-size: 11.5px; color: var(--steel); margin-top: 5px; }
+  .saved-mark.ok { color: var(--success); font-weight: 500; }
+  .decision-col { min-width: 190px; }
+
+  .confirm-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+  input.confirm-budget { width: 112px; height: 30px; padding: 0 11px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13.5px; font-family: var(--font); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  input.confirm-budget:focus { outline: none; border: 2px solid var(--fb-blue); padding: 0 10px; }
+  .verdict-col { min-width: 180px; }
+  .confirm-btn { height: 30px; display: inline-flex; align-items: center; background: var(--primary); color: #fff; border: none; border-radius: var(--r-full); padding: 0 16px; font-size: 12px; font-weight: 700; font-family: var(--font); letter-spacing: -0.01em; cursor: pointer; transition: background .15s ease-out; }
+  .confirm-btn:hover { background: var(--primary-deep); }
+  .confirm-btn:active { background: var(--primary-deep); }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 24px; }
+    .criteria-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand-chip"><span class="dot"></span>Meta 협력광고 · 예산 제안</div>
+  <h1>메타 예산 제안 리포트</h1>
+  <div class="sub">계정: #퍼4팀_셀라딕스_협력광고_이삼오구(회사카드) (1768335020594437) · 생성일: 2026-07-06 · 판단 기간: 최근 3일 (2026-07-03 ~ 2026-07-05)</div>
+  <div class="note">ℹ️ 팀장님이 저장하신 최신 기준(고정 금액 방식)으로 계산했습니다. 판단 기간(3일)과 최소 지출액(10만원)은 사이트에 0으로 저장돼 있어 이번 실행에만 직접 적용했습니다 — 다음을 위해 사이트 기준 입력칸에도 채워두세요.</div>
+  <div class="card"><div class="criteria-grid"><div><b>논타겟 ROAS 4단계</b>2.00↑ 증액 · 1.20~1.99 감액 · 1.01~1.19 유지 · 1.00↓ OFF</div><div><b>증감액</b>증액 +10만원 · 감액 -10만원 (고정 금액)</div><div><b>카탈로그</b>ROAS 4.0 이상이면 +10만원 증액</div><div><b>소재 OFF</b>지출 4만원 이상 & 전환 0건</div><div><b>최소 예산</b>10만원 미만이면 감액 대신 OFF</div><div><b>최소 지출액 / 판단 기간</b>10만원 미만 제외 / 최근 3일</div></div></div>
+  <h2>표 1. 논타겟 — 자동 제안 (핵심)</h2>
+  <div class="table-scroll"><table><thead><tr><th>광고세트명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th class="num">구매</th><th class="num">매출</th><th class="num">ROAS</th><th>규칙상 판정</th><th class="num">제안 예산</th><th class="num">확정 예산</th><th class="verdict-col">최종 판정</th></tr></thead>
+  <tbody id="table1-body">
+      <tr data-item-id="120250927474150416" data-item-name="260612_131_영상_미니속보디(훈)" data-entity-type="ad_set" data-current-budget="400000" data-proposed-budget="500000"><td>260612_131_영상_미니속보디(훈)</td><td class="num">400,000</td><td class="num">953,104</td><td class="num">130건</td><td class="num">3,635,839</td><td class="num">3.81</td><td><span class="tag tag-up">증액</span></td><td class="num">500,000</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120251181354810416" data-item-name="260615_131_영상_아도미니디(유)(훈)(세)(나)(조)" data-entity-type="ad_set" data-current-budget="200000" data-proposed-budget="300000"><td>260615_131_영상_아도미니디(유)(훈)(세)(나)(조)</td><td class="num">200,000</td><td class="num">605,851</td><td class="num">65건</td><td class="num">1,776,315</td><td class="num">2.93</td><td><span class="tag tag-up">증액</span></td><td class="num">300,000</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120251429828570416" data-item-name="260618_131_배너_올포기기획(조)" data-entity-type="ad_set" data-current-budget="200000" data-proposed-budget="300000"><td>260618_131_배너_올포기기획(조)</td><td class="num">200,000</td><td class="num">600,483</td><td class="num">66건</td><td class="num">1,827,968</td><td class="num">3.04</td><td><span class="tag tag-up">증액</span></td><td class="num">300,000</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120250291064200416" data-item-name="260605_131_영상_늘이농PA" data-entity-type="ad_set" data-current-budget="200000" data-proposed-budget="300000"><td>260605_131_영상_늘이농PA</td><td class="num">200,000</td><td class="num">594,255</td><td class="num">51건</td><td class="num">1,273,370</td><td class="num">2.14</td><td><span class="tag tag-up">증액</span></td><td class="num">300,000</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120252499215360416" data-item-name="260702_131_영상_WA올영유리쟁여혠2" data-entity-type="ad_set" data-current-budget="300000" data-proposed-budget="400000"><td>260702_131_영상_WA올영유리쟁여혠2</td><td class="num">300,000</td><td class="num">571,839</td><td class="num">68건</td><td class="num">1,847,143</td><td class="num">3.23</td><td><span class="tag tag-up">증액</span></td><td class="num">400,000</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120249394803440416" data-item-name="260528_131_영상_제발여기서사올영" data-entity-type="ad_set" data-current-budget="50000" data-proposed-budget="0"><td>260528_131_영상_제발여기서사올영</td><td class="num">50,000</td><td class="num">170,359</td><td class="num">9건</td><td class="num">228,600</td><td class="num">1.34</td><td><span class="tag tag-off">OFF 제안</span></td><td class="num">-</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120252499215340416" data-item-name="260702_131_영상_WA올영조율혠2" data-entity-type="ad_set" data-current-budget="50000" data-proposed-budget="0"><td>260702_131_영상_WA올영조율혠2</td><td class="num">50,000</td><td class="num">161,015</td><td class="num">6건</td><td class="num">200,420</td><td class="num">1.24</td><td><span class="tag tag-off">OFF 제안</span></td><td class="num">-</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+      <tr data-item-id="120251429828580416" data-item-name="260618_131_영상_호미니동디(조)(훈)(세)(나)" data-entity-type="ad_set" data-current-budget="50000" data-proposed-budget="0"><td>260618_131_영상_호미니동디(조)(훈)(세)(나)</td><td class="num">50,000</td><td class="num">151,400</td><td class="num">10건</td><td class="num">254,000</td><td class="num">1.68</td><td><span class="tag tag-off">OFF 제안</span></td><td class="num">-</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+    </tbody></table></div>
+  <div class="sub" style="margin-top:8px;">증액 5개, OFF 제안 3개(현재 예산 5만원 세트를 10만원 감액하면 마이너스 → OFF로 전환). 확정 예산은 제안 예산이 기본값이며, 직접 바꿔 "확인"하면 판정이 다시 계산됩니다.</div>
+  <h2>표 2. 카탈로그 — 자동 제안</h2>
+  <div class="table-scroll"><table><thead><tr><th>캐페인명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th class="num">구매</th><th class="num">매출</th><th class="num">ROAS</th><th>판정</th><th class="num">제안 예산</th><th class="num">확정 예산</th><th class="verdict-col">최종 판정</th></tr></thead>
+  <tbody id="table2-body">
+      <tr data-item-id="120249573149620416" data-item-name="131앰플(6월_올영세일_카탈로그)_어밴플12_260528" data-entity-type="campaign" data-current-budget="100000" data-proposed-budget="100000"><td>131앰플(6월_올영세일_카탈로그)_어밴플12_260528</td><td class="num">100,000</td><td class="num">334,630</td><td class="num">42건</td><td class="num">1,207,880</td><td class="num">3.61</td><td><span class="tag tag-hold">유지(확인 필요)</span></td><td class="num">100,000</td><td class="num confirm-col"></td><td class="verdict-col"></td></tr>
+    </tbody></table></div>
+  <div class="sub" style="margin-top:8px;">ROAS 3.61로 기준(4.0) 미달 — 증액하지 않았습니다.</div>
+  <h2>표 3. 참고용 데이터 (장바구니 · 트래픽 · 토너 · 기타) — 직접 판단해주세요</h2>
+  <div class="table-scroll"><table><thead><tr><th>그룹</th><th>캐페인·세트명</th><th class="num">현재 일 예산</th><th class="num">3일 지출</th><th>결과</th><th class="num">ROAS/매출</th><th class="decision-col">담당자 판단</th></tr></thead>
+  <tbody id="table3-body">
+      <tr data-item-id="120248916133400416" data-item-name="131앰플(6월_올영세일)_어밴플9_260519"><td><span class="tag tag-ref">기타</span></td><td>131앰플(6월_올영세일)_어밴플9_260519</td><td class="num">600,000</td><td class="num">1,841,475</td><td>구매 144건</td><td class="num">ROAS 2.27</td><td class="decision-col"></td></tr>
+      <tr data-item-id="120244240676450416" data-item-name="131앰플(올영_장바구니)_어밴플7_260311"><td><span class="tag tag-ref">장바구니</span></td><td>131앰플(올영_장바구니)_어밴플7_260311</td><td class="num">200,000</td><td class="num">695,725</td><td>장바구니 담기 1,169건</td><td class="num">담긴 상품가 26,469,352원*</td><td class="decision-col"></td></tr>
+      <tr data-item-id="120252441111820416" data-item-name="131토너(올영_상시)_어밴플16_260701"><td><span class="tag tag-ref">토너</span></td><td>131토너(올영_상시)_어밴플16_260701</td><td class="num">100,000</td><td class="num">541,256</td><td>구매 42건</td><td class="num">ROAS 1.98</td><td class="decision-col"></td></tr>
+      <tr data-item-id="120252123131640416" data-item-name="131토너(올영_상시)_논타겟_전환_260701"><td><span class="tag tag-ref">토너</span></td><td>131토너(올영_상시)_논타겟_전환_260701 <span style="color:var(--stone);font-size:11px;">(논타겟 키워드 감지됨)</span></td><td class="num">-</td><td class="num">3,874,740</td><td>구매 268건</td><td class="num">ROAS 1.46</td><td class="decision-col"></td></tr>
+      <tr data-item-id="120244119213020416" data-item-name="131앰플(올영_트래픽)_논타겟_260309"><td><span class="tag tag-ref">트래픽</span></td><td>131앰플(올영_트래픽)_논타겟_260309 <span style="color:var(--stone);font-size:11px;">(논타겟 키워드 감지됨)</span></td><td class="num">-</td><td class="num">299,992</td><td>링크클릭 3,088건</td><td class="num">클릭당 97원</td><td class="decision-col"></td></tr>
+    </tbody></table></div>
+  <div class="sub" style="margin-top:8px;">*장바구니 담긴 상품가는 실제 매출이 아닙니다 (참고용 추정치). 토너는 팀장님이 실시간으로 직접 모니터링하는 영역입니다.</div>
+  <h2>표 4. 소재(광고) OFF 제안</h2>
+  <div class="sub" style="margin-bottom:8px;">지출 40,000원 이상 & 구매 0건인 소재가 이번 기간엔 없었습니다 (논타겟·토너 소재 전수 확인 — 지출 있는 소재는 모두 구매 발생).</div>
+  <div class="table-scroll"><table><thead><tr><th>소재명</th><th>소속 세트</th><th class="num">3일 지출</th><th class="num">구매</th><th>OFF 제안</th></tr></thead><tbody id="table4-body">
+    </tbody></table></div>
+  <h2>판단 제외 목록</h2>
+  <div class="table-scroll"><table><thead><tr><th>대상</th><th>그룹</th><th>제외 사유</th></tr></thead><tbody>
+      <tr><td>260702_131_영상_WA올영유리쟁여혠1</td><td>논타겟(신규)</td><td>현재 PAUSED 상태 · 지출 46,450원</td></tr>
+      <tr><td>260702_131_영상_WA올영유리쟁여혠3</td><td>논타겟(신규)</td><td>현재 PAUSED 상태 · 지출 45,012원</td></tr>
+    </tbody></table></div>
+  <div class="foot">이 리포트는 제안입니다. 실제 예산 변경/OFF는 Ads Manager에서 직접 진행해주세요.<br>표 1·2에서 "확정 예산"을 입력하면 "최종 판정" 배지가 실시간으로 바뀌지만, <b>"확인" 버튼을 눌러야 실제로 저장</b>됩니다. 표 3·4의 담당자 판단 드롭다운은 선택 즉시 저장됩니다.</div>
+</div>
+
+<script>
+const REPORT_ID = 'budget-proposal-20260706-1768335020594437';
+const MIN_BUDGET_KRW = 100000; // 팀장 기준의 minBudgetKRW (이 밑으로 내려가면 감액 대신 OFF)
+const DECISION_OPTIONS = ['(선택 안 함)', '증액', '감액', '유지', 'OFF', '보류'];
+
+function computeVerdict(current, confirmed) {
+  if (confirmed < MIN_BUDGET_KRW) return 'OFF';
+  if (confirmed > current) return '증액';
+  if (confirmed < current) return '감액';
+  return '유지';
+}
+
+function verdictTag(verdict) {
+  const cls = { '증액': 'tag-up', '감액': 'tag-down', '유지': 'tag-hold', 'OFF': 'tag-off' }[verdict] || 'tag-hold';
+  return `<span class="tag ${cls}">${verdict === 'OFF' ? 'OFF 확정' : verdict}</span>`;
+}
+
+function buildBudgetConfirm(row) {
+  const current = Number(row.dataset.currentBudget);
+  const proposed = Number(row.dataset.proposedBudget);
+  const confirmTd = row.querySelector('.confirm-col');
+  const verdictTd = row.querySelector('.verdict-col');
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.className = 'confirm-budget';
+  input.step = '10000';
+  input.value = proposed;
+  confirmTd.appendChild(input);
+
+  const badge = document.createElement('span'); // 배지를 담는 고정 컨테이너 (내용만 갈아끼움)
+  const confirmBtn = document.createElement('button');
+  confirmBtn.type = 'button';
+  confirmBtn.className = 'confirm-btn';
+  confirmBtn.textContent = '확인';
+  const mark = document.createElement('span');
+  mark.className = 'saved-mark';
+
+  const confirmRow = document.createElement('div');
+  confirmRow.className = 'confirm-row';
+  confirmRow.appendChild(badge);
+  confirmRow.appendChild(confirmBtn);
+  verdictTd.appendChild(confirmRow);
+  verdictTd.appendChild(mark);
+
+  function render() {
+    const confirmed = Number(input.value);
+    badge.innerHTML = verdictTag(computeVerdict(current, confirmed));
+  }
+  render();
+
+  // 입력값 바꿀 때는 배지만 실시간으로 갱신 (아직 저장 안 함)
+  input.addEventListener('input', render);
+
+  // "확인" 버튼을 눌러야 실제로 저장됨
+  confirmBtn.addEventListener('click', async () => {
+    render();
+    mark.textContent = '저장 중...';
+    mark.className = 'saved-mark';
+    try {
+      const confirmed = Number(input.value);
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          type: 'decisions',
+          reportId: REPORT_ID,
+          itemId: row.dataset.itemId,
+          itemName: row.dataset.itemName,
+          decision: computeVerdict(current, confirmed),
+          entityType: row.dataset.entityType || '',
+          currentBudgetKRW: current,
+          proposedBudgetKRW: proposed,
+          confirmedBudgetKRW: confirmed
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      mark.textContent = `확인됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`;
+      mark.className = 'saved-mark ok';
+    } catch (e) {
+      mark.textContent = '저장 실패: ' + e.message;
+      mark.className = 'saved-mark';
+    }
+  });
+
+  input.renderOnly = render;
+  return input;
+}
+
+function buildSelect(row) {
+  const td = row.querySelector('.decision-col');
+  const select = document.createElement('select');
+  select.className = 'decision';
+  DECISION_OPTIONS.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt === '(선택 안 함)' ? '' : opt;
+    o.textContent = opt;
+    select.appendChild(o);
+  });
+  const mark = document.createElement('span');
+  mark.className = 'saved-mark';
+  td.appendChild(select);
+  td.appendChild(mark);
+
+  select.addEventListener('change', async () => {
+    if (!select.value) return;
+    mark.textContent = '저장 중...';
+    mark.className = 'saved-mark';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          type: 'decisions',
+          reportId: REPORT_ID,
+          itemId: row.dataset.itemId,
+          itemName: row.dataset.itemName,
+          decision: select.value,
+          entityType: row.dataset.entityType || '',
+          currentBudgetKRW: row.dataset.currentBudget || '',
+          proposedBudgetKRW: row.dataset.proposedBudget || ''
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      mark.textContent = `저장됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`;
+      mark.className = 'saved-mark ok';
+    } catch (e) {
+      mark.textContent = '저장 실패: ' + e.message;
+      mark.className = 'saved-mark';
+    }
+  });
+
+  return select;
+}
+
+async function init() {
+  const budgetRows = [...document.querySelectorAll('#table1-body tr'), ...document.querySelectorAll('#table2-body tr')];
+  const selectRows = [...document.querySelectorAll('#table3-body tr'), ...document.querySelectorAll('#table4-body tr')];
+
+  const inputs = {};
+  budgetRows.forEach(row => { inputs[row.dataset.itemId] = buildBudgetConfirm(row); });
+  const selects = {};
+  selectRows.forEach(row => { selects[row.dataset.itemId] = buildSelect(row); });
+
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=decisions&reportId=${REPORT_ID}`);
+    const saved = await res.json();
+    budgetRows.forEach(row => {
+      const record = saved[row.dataset.itemId];
+      if (record && record.confirmedBudgetKRW !== '' && record.confirmedBudgetKRW != null) {
+        const input = inputs[row.dataset.itemId];
+        input.value = record.confirmedBudgetKRW;
+        input.renderOnly();
+        const mark = row.querySelector('.saved-mark');
+        if (record.decidedAt) {
+          mark.textContent = `저장됨 ✓ (${new Date(record.decidedAt).toLocaleString('ko-KR')})`;
+          mark.className = 'saved-mark ok';
+        }
+      }
+    });
+    selectRows.forEach(row => {
+      const itemId = row.dataset.itemId;
+      const record = saved[itemId];
+      if (record) {
+        selects[itemId].value = record.decision;
+        const mark = row.querySelector('.saved-mark');
+        mark.textContent = `저장됨 ✓ (${new Date(record.decidedAt).toLocaleString('ko-KR')})`;
+        mark.className = 'saved-mark ok';
+      }
+    });
+  } catch (e) {
+    [...budgetRows, ...selectRows].forEach(row => {
+      const mark = row.querySelector('.saved-mark');
+      if (mark) mark.textContent = '이전 저장 내역을 불러오지 못했습니다 (서버 확인 필요)';
+    });
+  }
+}
+
+init();
+</script>
+</body>
+</html>
