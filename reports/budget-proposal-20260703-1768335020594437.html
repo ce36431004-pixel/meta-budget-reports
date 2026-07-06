@@ -54,7 +54,7 @@
   tbody tr:hover { background: var(--surface-soft); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
-  .tag { display: inline-block; padding: 3px 11px; border-radius: var(--r-full); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: var(--r-full); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
   .tag-up { background: var(--success); color: #fff; }
   .tag-down { background: var(--attention); color: #fff; }
   .tag-hold { background: var(--surface-soft); color: var(--steel); }
@@ -73,7 +73,6 @@
   input.confirm-budget { width: 112px; height: 30px; padding: 0 11px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13.5px; font-family: var(--font); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
   input.confirm-budget:focus { outline: none; border: 2px solid var(--fb-blue); padding: 0 10px; }
   .verdict-col { min-width: 180px; }
-  .verdict-col .tag { height: 30px; display: inline-flex; align-items: center; padding: 0 13px; }
   .confirm-btn { height: 30px; display: inline-flex; align-items: center; background: var(--primary); color: #fff; border: none; border-radius: var(--r-full); padding: 0 16px; font-size: 12px; font-weight: 700; font-family: var(--font); letter-spacing: -0.01em; cursor: pointer; transition: background .15s ease-out; }
   .confirm-btn:hover { background: var(--primary-deep); }
   .confirm-btn:active { background: var(--primary-deep); }
