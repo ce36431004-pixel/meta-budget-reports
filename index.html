@@ -400,7 +400,10 @@ async function loadDecisionsHistory() {
   const tbody = document.getElementById('historyDecisionsBody');
   try {
     const res = await fetch(`${APPS_SCRIPT_URL}?type=decisions&action=all`);
-    const list = await res.json();
+    const raw = await res.json();
+    // 초기 테스트 잔재 제외: 유효한 판정값이 아니거나 itemName이 'test'인 행은 숨김
+    const VALID = ['증액', '감액', '유지', 'OFF', '보류'];
+    const list = (Array.isArray(raw) ? raw : []).filter(it => VALID.includes(it.decision) && it.itemName !== 'test');
     if (!list.length) {
       tbody.innerHTML = '<tr><td colspan="8" style="color:var(--stone)">아직 확정된 결정이 없습니다.</td></tr>';
       return;
