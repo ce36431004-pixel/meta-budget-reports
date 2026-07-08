@@ -258,12 +258,12 @@
       <h2>공통 설정</h2>
       <div class="row">
         <div>
-          <label>판단 기간 (최근 며칠 데이터)</label>
-          <input type="number" step="1" id="lookbackDays" placeholder="예: 7">
+          <label>판단 기간 (최근 며칠 데이터, 1 이상)</label>
+          <input type="number" step="1" min="1" id="lookbackDays" value="7" placeholder="예: 7">
         </div>
         <div>
           <label>최소 지출액 (KRW, 미달 시 판단 제외)</label>
-          <input type="number" step="1000" id="minSpendKRW" placeholder="예: 10000">
+          <input type="number" step="1000" min="0" id="minSpendKRW" value="100000" placeholder="예: 100000">
         </div>
       </div>
       <label>최소 예산 (원, 감액했을 때 이 밑으로 내려가면 감액 대신 OFF로 전환)</label>
@@ -352,6 +352,34 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     minSpendKRW: Number(document.getElementById('minSpendKRW').value),
     minBudgetKRW: Number(document.getElementById('minBudgetKRW').value)
   };
+
+  // 입력값 검증 — 빈칸이 0으로 저장돼 리포트가 안 돌던 버그 방지 + 논리적 오류 차단
+  const rawVal = id => document.getElementById(id).value.trim();
+  const t = payload.nonTarget.roasTiers;
+  const errs = [];
+  if (rawVal('lookbackDays') === '' || !Number.isInteger(payload.lookbackDays) || payload.lookbackDays < 1)
+    errs.push('판단 기간은 1 이상의 정수여야 합니다 (비워두면 안 됨)');
+  if (rawVal('minSpendKRW') === '' || !(payload.minSpendKRW >= 0))
+    errs.push('최소 지출액을 0 이상으로 입력해주세요 (비워두면 안 됨)');
+  if (rawVal('minBudgetKRW') === '' || !(payload.minBudgetKRW > 0))
+    errs.push('최소 예산을 0보다 크게 입력해주세요');
+  if ([t.increaseAt, t.decreaseAt, t.holdAt, t.offAt].some(v => !(v > 0)))
+    errs.push('논타겟 ROAS 4단계 값은 모두 0보다 커야 합니다');
+  else if (!(t.increaseAt > t.decreaseAt && t.decreaseAt > t.holdAt && t.holdAt >= t.offAt))
+    errs.push('논타겟 ROAS 단계 순서가 잘못됐습니다 (증액 > 감액 > 유지 ≥ OFF 여야 함)');
+  if (!(payload.budgetStep.increaseAmountKRW > 0))
+    errs.push('증액 시 증가액은 0보다 커야 합니다');
+  if (!(payload.budgetStep.decreaseAmountKRW < 0))
+    errs.push('감액 시 감소액은 음수(-)로 입력해야 합니다 (예: -100000)');
+  if (payload.catalog.increaseAtRoas <= 0 || payload.catalog.increaseAmountKRW <= 0)
+    errs.push('카탈로그 기준 ROAS와 증가액은 0보다 커야 합니다');
+  if (!(payload.creativeOff.minSpendKRW >= 0))
+    errs.push('소재 OFF 최소 지출액을 0 이상으로 입력해주세요');
+  if (errs.length) {
+    msg.style.color = 'var(--critical)';
+    msg.innerHTML = '저장할 수 없습니다:<br>· ' + errs.join('<br>· ');
+    return;
+  }
 
   msg.style.color = 'var(--steel)';
   msg.textContent = '저장 중...';
