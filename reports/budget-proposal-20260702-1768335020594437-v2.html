@@ -4,50 +4,88 @@
 <meta charset="UTF-8">
 <title>메타 예산 제안 리포트 (팀장 기준 반영) - #퍼4팀_셀라딕스_협력광고_이삼오구</title>
 <script src="../config.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #2563eb; --bg: #f8fafc; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; --up: #16a34a; --down: #dc2626; --hold: #ca8a04; --off:#7c2d12; --ref:#475569; }
+  :root {
+    --primary: #0064e0;
+    --primary-deep: #0457cb;
+    --fb-blue: #1876f2;
+    --ink-button: #000000;
+    --canvas: #ffffff;
+    --surface-soft: #f1f4f7;
+    --ink-deep: #0a1317;
+    --ink: #1c1e21;
+    --charcoal: #444950;
+    --steel: #5d6c7b;
+    --stone: #8595a4;
+    --hairline: #ced0d4;
+    --hairline-soft: #dee3e9;
+    --success: #31a24c;
+    --attention: #f2a918;
+    --critical: #e41e3f;
+    /* aliases kept for existing references */
+    --accent: #0064e0; --bg: #f1f4f7; --border: #dee3e9; --text: #1c1e21; --muted: #5d6c7b;
+    --up: #31a24c; --down: #f2a918; --hold: #5d6c7b; --off: #e41e3f; --ref: #5d6c7b;
+    --r-lg: 8px; --r-xl: 16px; --r-full: 100px;
+    --font: 'Montserrat', 'Noto Sans KR', -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  }
   * { box-sizing: border-box; }
-  body { font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font); background: var(--canvas); color: var(--ink-deep); margin: 0; padding: 44px 20px 80px; line-height: 1.5; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
   .wrap { max-width: 1160px; margin: 0 auto; }
-  h1 { font-size: 24px; margin: 0 0 6px; letter-spacing: -0.01em; }
-  h2 { font-size: 16px; margin: 40px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--text); display: inline-block; }
-  .sub { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
-  .card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
-  .note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px 18px; font-size: 13.5px; color: #1e3a8a; margin: 18px 0 28px; line-height: 1.7; }
-  .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; font-size: 13.5px; }
-  .criteria-grid div { background: var(--bg); border-radius: 10px; padding: 12px 14px; line-height: 1.5; }
-  .criteria-grid b { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .brand-chip { display: inline-flex; align-items: center; gap: 7px; background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 13px; border-radius: var(--r-full); margin-bottom: 16px; }
+  .brand-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; opacity: .9; }
+  h1 { font-size: 30px; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.02em; line-height: 1.16; }
+  h2 { font-size: 20px; font-weight: 700; margin: 44px 0 14px; letter-spacing: -0.01em; }
+  .sub { color: var(--steel); font-size: 14px; margin-bottom: 8px; line-height: 1.55; }
+  .card { background: var(--canvas); border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); padding: 24px 26px; margin-bottom: 24px; }
+  .note { background: rgba(0, 100, 224, 0.06); border: 1px solid rgba(0, 100, 224, 0.18); border-radius: var(--r-xl); padding: 16px 18px; font-size: 13.5px; color: #143f7a; margin: 20px 0 28px; line-height: 1.7; }
+  .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 13.5px; }
+  .criteria-grid > div { background: var(--surface-soft); border-radius: var(--r-lg); padding: 13px 15px; line-height: 1.5; }
+  .criteria-grid b { display: block; font-size: 11px; color: var(--steel); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 
-  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--hairline-soft); border-radius: var(--r-xl); background: var(--canvas); width: fit-content; max-width: 100%; }
   table { width: auto; border-collapse: collapse; font-size: 13.5px; table-layout: auto; }
-  th, td { border-bottom: 1px solid var(--border); padding: 11px 14px; text-align: left; vertical-align: middle; white-space: nowrap; }
-  thead th { color: var(--muted); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+  th, td { border-bottom: 1px solid var(--hairline-soft); padding: 12px 15px; text-align: left; vertical-align: middle; white-space: nowrap; }
+  thead th { color: var(--steel); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; background: var(--surface-soft); border-bottom: 1px solid var(--hairline-soft); position: sticky; top: 0; }
   tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: #f8fafc; }
+  tbody tr:hover { background: var(--surface-soft); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
-  .tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
-  .tag-up { background: #dcfce7; color: var(--up); }
-  .tag-down { background: #fee2e2; color: var(--down); }
-  .tag-hold { background: #fef9c3; color: var(--hold); }
-  .tag-off { background: #ffe4e6; color: var(--off); }
-  .tag-ref { background: #e2e8f0; color: var(--ref); }
+  .tag { display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: var(--r-full); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .tag-up { background: var(--success); color: #fff; }
+  .tag-down { background: var(--attention); color: #fff; }
+  .tag-hold { background: var(--surface-soft); color: var(--steel); }
+  .tag-off { background: var(--critical); color: #fff; }
+  .tag-ref { background: var(--surface-soft); color: var(--steel); }
 
-  .foot { margin-top: 40px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 18px; line-height: 1.7; }
-  select.decision { padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: #fff; }
-  .saved-mark { display: block; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
-  .saved-mark.ok { color: var(--up); }
+  .foot { margin-top: 44px; font-size: 13px; color: var(--steel); border-top: 1px solid var(--hairline-soft); padding-top: 20px; line-height: 1.7; }
+  .foot b { color: var(--charcoal); }
+  select.decision { padding: 8px 12px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13px; font-family: var(--font); background: var(--canvas); color: var(--ink); cursor: pointer; }
+  select.decision:focus { outline: none; border: 2px solid var(--fb-blue); }
+  .saved-mark { display: block; font-size: 11.5px; color: var(--steel); margin-top: 5px; }
+  .saved-mark.ok { color: var(--success); font-weight: 500; }
   .decision-col { min-width: 190px; }
 
-  .confirm-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  input.confirm-budget { width: 110px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 8px; font-size: 13.5px; text-align: right; font-variant-numeric: tabular-nums; }
+  .confirm-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+  input.confirm-budget { width: 112px; height: 30px; padding: 0 11px; border: 1px solid var(--hairline); border-radius: var(--r-lg); font-size: 13.5px; font-family: var(--font); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  input.confirm-budget:focus { outline: none; border: 2px solid var(--fb-blue); padding: 0 10px; }
   .verdict-col { min-width: 180px; }
-  .confirm-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
-  .confirm-btn:hover { background: #1d4ed8; }
+  .confirm-btn { height: 30px; display: inline-flex; align-items: center; background: var(--primary); color: #fff; border: none; border-radius: var(--r-full); padding: 0 16px; font-size: 12px; font-weight: 700; font-family: var(--font); letter-spacing: -0.01em; cursor: pointer; transition: background .15s ease-out; }
+  .confirm-btn:hover { background: var(--primary-deep); }
+  .confirm-btn:active { background: var(--primary-deep); }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 24px; }
+    .criteria-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="brand-chip"><span class="dot"></span>Meta 협력광고 · 예산 제안</div>
   <h1>메타 예산 제안 리포트 (팀장 기준 반영 · 판단 기간 3일)</h1>
   <div class="sub">계정: #퍼4팀_셀라딕스_협력광고_이삼오구(회사카드) (1768335020594437) · 생성일: 2026-07-02 · 판단 기간: 최근 3일 (2026-06-29 ~ 2026-07-01)</div>
 
