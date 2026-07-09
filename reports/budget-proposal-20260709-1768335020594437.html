@@ -169,7 +169,7 @@ const DECISION_OPTIONS = ['(선택 안 함)', '증액', '감액', '유지', 'OFF
 const CREATIVE_OPTIONS = ['유지', 'OFF'];
 
 function computeVerdict(current, confirmed) {
-  if (confirmed < MIN_BUDGET_KRW) return 'OFF';
+  if (confirmed === 0) return 'OFF';
   if (confirmed > current) return '증액';
   if (confirmed < current) return '감액';
   return '유지';
