@@ -88,9 +88,24 @@ function doPost(e) {
   }
 
   if (body.type === 'decisions') {
+    const sheet = getSheet_(DECISIONS_SHEET, DECISIONS_HEADER);
+
+    // 특정 리포트의 저장된 결정을 전부 삭제 (담당자가 확정 전 상태로 롤백하고 싶을 때)
+    if (body.action === 'clearReport') {
+      if (!body.reportId) return json_({ error: 'reportId는 필수입니다' });
+      const rows = sheet.getDataRange().getValues();
+      let deleted = 0;
+      for (let i = rows.length - 1; i >= 1; i--) {
+        if (rows[i][0] === body.reportId) {
+          sheet.deleteRow(i + 1);
+          deleted++;
+        }
+      }
+      return json_({ ok: true, cleared: body.reportId, deleted });
+    }
+
     const { reportId, itemId } = body;
     if (!reportId || !itemId) return json_({ error: 'reportId, itemId는 필수입니다' });
-    const sheet = getSheet_(DECISIONS_SHEET, DECISIONS_HEADER);
     const rows = sheet.getDataRange().getValues();
 
     // 실행 완료 표시만 하는 호출 (executedAt만 옴, decision 등은 안 건드림)
