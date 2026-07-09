@@ -255,6 +255,13 @@
     </div>
 
     <div class="card">
+      <h2>④ 실적 비교 — 131앰플 올영 실매출 입력 (선택)</h2>
+      <div class="desc">이번 판단 기간에 올리브영에서 실제로 발생한 매출을 입력하면, 리포트 상단에서 메타가 귀속시킨 매출과 나란히 비교해서 보여줍니다. 비워두면 비교 없이 메타 매출만 표시됩니다.</div>
+      <label>올영 실매출 (원, 이번 판단 기간 기준)</label>
+      <input type="number" step="10000" min="0" id="oliveyoungRevenueKRW" placeholder="예: 20000000">
+    </div>
+
+    <div class="card">
       <h2>공통 설정</h2>
       <div class="row">
         <div>
@@ -350,7 +357,9 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     },
     lookbackDays: Number(document.getElementById('lookbackDays').value),
     minSpendKRW: Number(document.getElementById('minSpendKRW').value),
-    minBudgetKRW: Number(document.getElementById('minBudgetKRW').value)
+    minBudgetKRW: Number(document.getElementById('minBudgetKRW').value),
+    oliveyoungRevenueKRW: document.getElementById('oliveyoungRevenueKRW').value.trim() === ''
+      ? null : Number(document.getElementById('oliveyoungRevenueKRW').value)
   };
 
   // 입력값 검증 — 빈칸이 0으로 저장돼 리포트가 안 돌던 버그 방지 + 논리적 오류 차단
@@ -375,6 +384,8 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     errs.push('카탈로그 기준 ROAS와 증가액은 0보다 커야 합니다');
   if (!(payload.creativeOff.minSpendKRW >= 0))
     errs.push('소재 OFF 최소 지출액을 0 이상으로 입력해주세요');
+  if (payload.oliveyoungRevenueKRW != null && !(payload.oliveyoungRevenueKRW >= 0))
+    errs.push('올영 실매출을 0 이상으로 입력해주세요 (모르면 비워두세요)');
   if (errs.length) {
     msg.style.color = 'var(--critical)';
     msg.innerHTML = '저장할 수 없습니다:<br>· ' + errs.join('<br>· ');
