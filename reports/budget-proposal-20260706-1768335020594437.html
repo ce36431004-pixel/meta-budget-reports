@@ -130,7 +130,7 @@
 const REPORT_ID = 'budget-proposal-20260706-1768335020594437';
 const MIN_BUDGET_KRW = 100000;
 const DECISION_OPTIONS = ['(선택 안 함)', '증액', '감액', '유지', 'OFF', '보류'];
-const CREATIVE_OPTIONS = ['(선택 안 함)', '유지', 'OFF', '보류'];
+const CREATIVE_OPTIONS = ['유지', 'OFF'];
 
 function computeVerdict(current, confirmed) {
   if (confirmed < MIN_BUDGET_KRW) return 'OFF';
@@ -177,9 +177,8 @@ function buildBudgetConfirm(row) {
 }
 function buildSelect(row) {
   const td = row.querySelector('.decision-col');
-  const opts = row.classList.contains('creative-row') ? CREATIVE_OPTIONS : DECISION_OPTIONS;
   const select = document.createElement('select'); select.className = 'decision';
-  opts.forEach(o => { const op = document.createElement('option'); op.value = o === '(선택 안 함)' ? '' : o; op.textContent = o; select.appendChild(op); });
+  DECISION_OPTIONS.forEach(o => { const op = document.createElement('option'); op.value = o === '(선택 안 함)' ? '' : o; op.textContent = o; select.appendChild(op); });
   const mark = document.createElement('span'); mark.className = 'saved-mark';
   td.appendChild(select); td.appendChild(mark);
   select.addEventListener('change', async () => {
@@ -196,11 +195,39 @@ function buildSelect(row) {
   });
   return select;
 }
+function buildCreativeSelect(row) {
+  // 소재 담당자 판단: 기본값 "유지", "보류" 없음, 왼쪽 "확인" 버튼을 눌러야만 저장(선택만으로 자동 저장 안 됨)
+  const td = row.querySelector('.decision-col');
+  const select = document.createElement('select'); select.className = 'decision';
+  CREATIVE_OPTIONS.forEach(o => { const op = document.createElement('option'); op.value = o; op.textContent = o; select.appendChild(op); });
+  select.value = '유지';
+  const confirmBtn = document.createElement('button');
+  confirmBtn.type = 'button'; confirmBtn.className = 'confirm-btn'; confirmBtn.textContent = '확인';
+  const mark = document.createElement('span'); mark.className = 'saved-mark';
+  const wrap = document.createElement('div'); wrap.className = 'confirm-row';
+  wrap.appendChild(confirmBtn); wrap.appendChild(select);
+  td.appendChild(wrap); td.appendChild(mark);
+  confirmBtn.addEventListener('click', async () => {
+    mark.textContent = '저장 중...'; mark.className = 'saved-mark';
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ type:'decisions', reportId:REPORT_ID, itemId:row.dataset.itemId, itemName:row.dataset.itemName,
+          decision: select.value, entityType: row.dataset.entityType || '',
+          currentBudgetKRW: row.dataset.currentBudget || '', proposedBudgetKRW: row.dataset.proposedBudget || '' }) });
+      const data = await res.json(); if (data.error) throw new Error(data.error);
+      mark.textContent = `확인됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`; mark.className = 'saved-mark ok';
+    } catch (e) { mark.textContent = '저장 실패: ' + e.message; mark.className = 'saved-mark'; }
+  });
+  return select;
+}
 async function init() {
   const budgetRows = [...document.querySelectorAll('.budget-row')];
   const selectRows = [...document.querySelectorAll('.select-row')];
   const inputs = {}; budgetRows.forEach(r => inputs[r.dataset.itemId] = buildBudgetConfirm(r));
-  const selects = {}; selectRows.forEach(r => selects[r.dataset.itemId] = buildSelect(r));
+  const selects = {};
+  selectRows.forEach(r => {
+    selects[r.dataset.itemId] = r.classList.contains('creative-row') ? buildCreativeSelect(r) : buildSelect(r);
+  });
   try {
     const res = await fetch(`${APPS_SCRIPT_URL}?type=decisions&reportId=${REPORT_ID}`);
     const saved = await res.json();
