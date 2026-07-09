@@ -244,6 +244,14 @@ function buildCreativeSelect(row) {
   confirmBtn.type = 'button'; confirmBtn.className = 'confirm-btn'; confirmBtn.textContent = '확인';
   const mark = document.createElement('span'); mark.className = 'saved-mark';
   decisionTd.appendChild(confirmBtn); decisionTd.appendChild(mark);
+
+  const autoFlagged = row.classList.contains('off-candidate');
+  function syncOffStyle() {
+    row.classList.toggle('off-candidate', autoFlagged || select.value === 'OFF');
+  }
+  select.addEventListener('change', syncOffStyle);
+  select.syncOffStyle = syncOffStyle;
+
   confirmBtn.addEventListener('click', async () => {
     mark.textContent = '저장 중...'; mark.className = 'saved-mark';
     try {
@@ -278,8 +286,13 @@ async function init() {
     });
     selectRows.forEach(r => {
       const rec = saved[r.dataset.itemId];
-      if (rec) { selects[r.dataset.itemId].value = rec.decision; const mk = r.querySelector('.saved-mark');
-        mk.textContent = `저장됨 ✓ (${new Date(rec.decidedAt).toLocaleString('ko-KR')})`; mk.className = 'saved-mark ok'; }
+      if (rec) {
+        const sel = selects[r.dataset.itemId];
+        sel.value = rec.decision;
+        if (sel.syncOffStyle) sel.syncOffStyle();
+        const mk = r.querySelector('.saved-mark');
+        mk.textContent = `저장됨 ✓ (${new Date(rec.decidedAt).toLocaleString('ko-KR')})`; mk.className = 'saved-mark ok';
+      }
     });
   } catch (e) {
     [...budgetRows, ...selectRows].forEach(r => { const mk = r.querySelector('.saved-mark'); if (mk) mk.textContent = '이전 저장 내역을 불러오지 못했습니다'; });
