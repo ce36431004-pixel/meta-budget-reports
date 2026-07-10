@@ -425,6 +425,39 @@ function historyRowHtml(item) {
   `;
 }
 
+async function loadCriteriaIntoForm() {
+  // 마지막으로 저장된 기준값을 폼에 미리 채워둔다.
+  // 이게 없으면 CPA 보조기준/올영매출처럼 기본값이 없는 입력칸이 매번 빈칸으로 시작해서,
+  // 다른 값 하나만 고치려고 다시 저장할 때 이미 저장돼 있던 값이 조용히 지워지는 문제가 있었다.
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=criteria&action=latest`);
+    const c = await res.json();
+    if (!c) return; // 아직 저장된 기준이 없으면 기본값 그대로 둔다
+    const setVal = (id, val) => {
+      if (val !== null && val !== undefined && val !== '') document.getElementById(id).value = val;
+    };
+    setVal('tierIncreaseAt', c.nonTarget?.roasTiers?.increaseAt);
+    setVal('tierDecreaseAt', c.nonTarget?.roasTiers?.decreaseAt);
+    setVal('tierHoldAt', c.nonTarget?.roasTiers?.holdAt);
+    setVal('tierOffAt', c.nonTarget?.roasTiers?.offAt);
+    setVal('increaseAmountKRW', c.budgetStep?.increaseAmountKRW);
+    setVal('decreaseAmountKRW', c.budgetStep?.decreaseAmountKRW);
+    setVal('cpaIncreaseBelowKRW', c.nonTarget?.cpaThreshold?.increaseBelowKRW);
+    setVal('cpaDecreaseAboveKRW', c.nonTarget?.cpaThreshold?.decreaseAboveKRW);
+    setVal('catalogIncreaseAtRoas', c.catalog?.increaseAtRoas);
+    setVal('catalogIncreaseAmountKRW', c.catalog?.increaseAmountKRW);
+    setVal('creativeOffMinSpend', c.creativeOff?.minSpendKRW);
+    setVal('oliveyoungRevenueKRW', c.oliveyoungRevenueKRW);
+    setVal('minBudgetKRW', c.minBudgetKRW);
+    // lookbackDays/minSpendKRW는 과거에 빈칸이 0으로 잘못 저장된 스테일 데이터가 있을 수 있어
+    // 유효한 값(1 이상 / 0보다 큼)일 때만 덮어쓴다 — 0이면 옛 버그 값일 가능성이 높아 기본값을 유지한다.
+    if (Number.isInteger(c.lookbackDays) && c.lookbackDays >= 1) setVal('lookbackDays', c.lookbackDays);
+    if (typeof c.minSpendKRW === 'number' && c.minSpendKRW > 0) setVal('minSpendKRW', c.minSpendKRW);
+  } catch (e) {
+    // 실패해도 폼은 기본값으로 계속 쓸 수 있으니 조용히 무시
+  }
+}
+
 async function loadHistory() {
   const tbody = document.getElementById('historyBody');
   const res = await fetch(`${APPS_SCRIPT_URL}?type=criteria&action=history`);
@@ -484,6 +517,7 @@ async function loadDecisionsHistory() {
   }
 }
 
+loadCriteriaIntoForm();
 loadArchive();
 loadHistory();
 loadDecisionsHistory();
