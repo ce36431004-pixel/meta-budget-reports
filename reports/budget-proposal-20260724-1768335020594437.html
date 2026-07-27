@@ -102,6 +102,9 @@
   .offcand { display: inline-block; padding: 2px 9px; border-radius: var(--r-full); font-size: 11px; font-weight: 700; background: var(--critical); color: #fff; margin-left: 6px; vertical-align: middle; }
   tr.off-candidate { background: rgba(228, 30, 63, 0.05); }
   tr.off-candidate:hover { background: rgba(228, 30, 63, 0.09); }
+  /* 확인 버튼을 눌러 저장된 행 표시(OFF 후보 빨강보다는 낮은 우선순위 — tr.off-candidate가 더 구체적이라 항상 이김) */
+  tr.row-confirmed { background: rgba(49, 162, 76, 0.06); }
+  tr.row-confirmed:hover { background: rgba(49, 162, 76, 0.1); }
 
   /* 가독성: ROAS 색상 강조 (실제 판정 기준과는 별개, 훑어보기용 신호) */
   .roas-good { color: var(--success); font-weight: 700; }
@@ -212,6 +215,7 @@ function buildBudgetConfirm(row) {
           currentBudgetKRW: current, proposedBudgetKRW: proposed, confirmedBudgetKRW: confirmed }) });
       const data = await res.json(); if (data.error) throw new Error(data.error);
       mark.textContent = `확인됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`; mark.className = 'saved-mark ok';
+      row.classList.add('row-confirmed');
     } catch (e) { mark.textContent = '저장 실패: ' + e.message; mark.className = 'saved-mark'; }
   });
   input.renderOnly = render;
@@ -233,6 +237,7 @@ function buildSelect(row) {
           currentBudgetKRW: row.dataset.currentBudget || '', proposedBudgetKRW: row.dataset.proposedBudget || '' }) });
       const data = await res.json(); if (data.error) throw new Error(data.error);
       mark.textContent = `저장됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`; mark.className = 'saved-mark ok';
+      row.classList.add('row-confirmed');
     } catch (e) { mark.textContent = '저장 실패: ' + e.message; mark.className = 'saved-mark'; }
   });
   return select;
@@ -269,6 +274,7 @@ function buildCreativeSelect(row) {
           currentBudgetKRW: row.dataset.currentBudget || '', proposedBudgetKRW: row.dataset.proposedBudget || '' }) });
       const data = await res.json(); if (data.error) throw new Error(data.error);
       mark.textContent = `확인됨 ✓ (${new Date(data.saved.decidedAt).toLocaleString('ko-KR')})`; mark.className = 'saved-mark ok';
+      row.classList.add('row-confirmed');
     } catch (e) { mark.textContent = '저장 실패: ' + e.message; mark.className = 'saved-mark'; }
   });
   return select;
@@ -290,6 +296,7 @@ async function init() {
         const inp = inputs[r.dataset.itemId]; inp.value = rec.confirmedBudgetKRW; inp.renderOnly();
         const mk = r.querySelector('.saved-mark');
         if (rec.decidedAt) { mk.textContent = `저장됨 ✓ (${new Date(rec.decidedAt).toLocaleString('ko-KR')})`; mk.className = 'saved-mark ok'; }
+        r.classList.add('row-confirmed');
       }
     });
     selectRows.forEach(r => {
@@ -300,6 +307,7 @@ async function init() {
         if (sel.syncOffStyle) sel.syncOffStyle();
         const mk = r.querySelector('.saved-mark');
         mk.textContent = `저장됨 ✓ (${new Date(rec.decidedAt).toLocaleString('ko-KR')})`; mk.className = 'saved-mark ok';
+        r.classList.add('row-confirmed');
       }
     });
   } catch (e) {
