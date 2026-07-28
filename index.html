@@ -87,6 +87,8 @@
   .card .desc { font-size: 13.5px; color: var(--steel); margin-bottom: 18px; line-height: 1.5; }
 
   label { display: block; font-size: 13px; font-weight: 700; color: var(--charcoal); margin-bottom: 7px; margin-top: 16px; letter-spacing: -0.01em; }
+  label.checkbox-row { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 500; color: var(--steel); margin-top: 10px; cursor: pointer; }
+  label.checkbox-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; margin: 0; }
   input[type=number] {
     width: 100%; height: 44px; padding: 0 14px;
     border: 1px solid var(--hairline); border-radius: var(--r-lg);
@@ -267,6 +269,10 @@
         <div>
           <label>판단 기간 (최근 며칠 데이터, 1 이상)</label>
           <input type="number" step="1" min="1" id="lookbackDays" value="7" placeholder="예: 7">
+          <label class="checkbox-row" for="includeToday">
+            <input type="checkbox" id="includeToday">
+            오늘 데이터 포함 (예: 1일 + 체크 → 어제~오늘)
+          </label>
         </div>
         <div>
           <label>최소 지출액 (KRW, 미달 시 판단 제외)</label>
@@ -356,6 +362,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
       minSpendKRW: Number(document.getElementById('creativeOffMinSpend').value)
     },
     lookbackDays: Number(document.getElementById('lookbackDays').value),
+    includeToday: document.getElementById('includeToday').checked,
     minSpendKRW: Number(document.getElementById('minSpendKRW').value),
     minBudgetKRW: Number(document.getElementById('minBudgetKRW').value),
     oliveyoungRevenueKRW: document.getElementById('oliveyoungRevenueKRW').value.trim() === ''
@@ -420,7 +427,7 @@ function historyRowHtml(item) {
       <td>${item.nonTarget?.roasTiers?.increaseAt ?? '-'}/${item.nonTarget?.roasTiers?.decreaseAt ?? '-'}/${item.nonTarget?.roasTiers?.holdAt ?? '-'}/${item.nonTarget?.roasTiers?.offAt ?? '-'} (증액 ${item.budgetStep?.increaseAmountKRW != null ? '+'+item.budgetStep.increaseAmountKRW.toLocaleString() : '-'}/감액 ${item.budgetStep?.decreaseAmountKRW?.toLocaleString() ?? '-'})</td>
       <td>ROAS ${item.catalog?.increaseAtRoas ?? '-'} 이상 +${(item.catalog?.increaseAmountKRW ?? 0).toLocaleString()}원</td>
       <td>${(item.creativeOff?.minSpendKRW ?? 0).toLocaleString()}원</td>
-      <td>${item.lookbackDays ?? '-'}일 / 최소지출 ${(item.minSpendKRW ?? 0).toLocaleString()}원 / 최소예산 ${(item.minBudgetKRW ?? 0).toLocaleString()}원</td>
+      <td>${item.lookbackDays ?? '-'}일${item.includeToday ? ' + 오늘' : ''} / 최소지출 ${(item.minSpendKRW ?? 0).toLocaleString()}원 / 최소예산 ${(item.minBudgetKRW ?? 0).toLocaleString()}원</td>
     </tr>
   `;
 }
@@ -453,6 +460,7 @@ async function loadCriteriaIntoForm() {
     // 유효한 값(1 이상 / 0보다 큼)일 때만 덮어쓴다 — 0이면 옛 버그 값일 가능성이 높아 기본값을 유지한다.
     if (Number.isInteger(c.lookbackDays) && c.lookbackDays >= 1) setVal('lookbackDays', c.lookbackDays);
     if (typeof c.minSpendKRW === 'number' && c.minSpendKRW > 0) setVal('minSpendKRW', c.minSpendKRW);
+    document.getElementById('includeToday').checked = !!c.includeToday;
   } catch (e) {
     // 실패해도 폼은 기본값으로 계속 쓸 수 있으니 조용히 무시
   }
