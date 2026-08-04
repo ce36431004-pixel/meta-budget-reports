@@ -473,26 +473,37 @@ async function loadCriteriaIntoForm() {
 
 async function loadHistory() {
   const tbody = document.getElementById('historyBody');
-  const res = await fetch(`${APPS_SCRIPT_URL}?type=criteria&action=history`);
-  const list = await res.json();
-  if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--stone)">아직 저장된 기준이 없습니다.</td></tr>';
-    return;
-  }
-  const visible = list.slice(0, HISTORY_COLLAPSE_AT).map(historyRowHtml).join('');
-  const hidden = list.slice(HISTORY_COLLAPSE_AT).map(historyRowHtml).join('');
-  tbody.innerHTML = visible;
-  if (hidden) {
-    const moreRow = document.createElement('tr');
-    moreRow.innerHTML = `<td colspan="5" style="text-align:center;padding:10px;">
-      <button type="button" id="historyMoreBtn" style="background:none;border:1px solid var(--hairline);border-radius:var(--r-full);padding:6px 16px;font-size:12.5px;font-family:var(--font);color:var(--steel);cursor:pointer;">
-        지난 ${list.length - HISTORY_COLLAPSE_AT}건 더보기
-      </button></td>`;
-    tbody.appendChild(moreRow);
-    moreRow.querySelector('#historyMoreBtn').addEventListener('click', () => {
-      moreRow.insertAdjacentHTML('beforebegin', hidden);
-      moreRow.remove();
-    });
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=criteria&action=history`, { signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error(`서버 응답 오류 (HTTP ${res.status})`);
+    const list = await res.json();
+    if (!Array.isArray(list)) throw new Error('응답 형식이 올바르지 않습니다');
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--stone)">아직 저장된 기준이 없습니다.</td></tr>';
+      return;
+    }
+    const visible = list.slice(0, HISTORY_COLLAPSE_AT).map(historyRowHtml).join('');
+    const hidden = list.slice(HISTORY_COLLAPSE_AT).map(historyRowHtml).join('');
+    tbody.innerHTML = visible;
+    if (hidden) {
+      const moreRow = document.createElement('tr');
+      moreRow.innerHTML = `<td colspan="5" style="text-align:center;padding:10px;">
+        <button type="button" id="historyMoreBtn" style="background:none;border:1px solid var(--hairline);border-radius:var(--r-full);padding:6px 16px;font-size:12.5px;font-family:var(--font);color:var(--steel);cursor:pointer;">
+          지난 ${list.length - HISTORY_COLLAPSE_AT}건 더보기
+        </button></td>`;
+      tbody.appendChild(moreRow);
+      moreRow.querySelector('#historyMoreBtn').addEventListener('click', () => {
+        moreRow.insertAdjacentHTML('beforebegin', hidden);
+        moreRow.remove();
+      });
+    }
+  } catch (e) {
+    const reason = e.name === 'AbortError' ? '서버 응답이 너무 느립니다(15초 초과)' : e.message;
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--critical)">불러오기 실패: ${reason}
+      <button type="button" onclick="loadHistory()" style="margin-left:8px;background:none;border:1px solid var(--hairline);border-radius:var(--r-full);padding:4px 12px;font-size:12px;font-family:var(--font);color:var(--steel);cursor:pointer;">다시 시도</button></td></tr>`;
   }
 }
 
