@@ -441,8 +441,7 @@ async function loadCriteriaIntoForm() {
   // 이게 없으면 CPA 보조기준/올영매출처럼 기본값이 없는 입력칸이 매번 빈칸으로 시작해서,
   // 다른 값 하나만 고치려고 다시 저장할 때 이미 저장돼 있던 값이 조용히 지워지는 문제가 있었다.
   try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?type=criteria&action=latest`);
-    const c = await res.json();
+    const c = await fetchJsonWithRetry(`${APPS_SCRIPT_URL}?type=criteria&action=latest`);
     if (!c) return; // 아직 저장된 기준이 없으면 기본값 그대로 둔다
     const setVal = (id, val) => {
       if (val !== null && val !== undefined && val !== '') document.getElementById(id).value = val;
@@ -471,15 +470,33 @@ async function loadCriteriaIntoForm() {
   }
 }
 
+// Apps Script는 간헐적으로 JSON 대신 404 HTML 에러 페이지를 반환한다(2026-08-04 확인).
+// 그때마다 화면이 "불러오지 못했습니다"로 바뀌어 데이터가 날아간 것처럼 보였기 때문에,
+// 조회 계열 요청은 전부 이 헬퍼를 통해 재시도한다(데이터 자체는 멀쩡한 게 확인됨).
+async function fetchJsonWithRetry(url, { tries = 4, timeoutMs = 15000 } = {}) {
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      const text = await res.text();
+      // HTML(에러 페이지)이 오면 실패로 간주하고 재시도한다
+      if (!res.ok || /^\s*</.test(text)) throw new Error(`서버 일시 오류 (HTTP ${res.status})`);
+      return JSON.parse(text);
+    } catch (e) {
+      lastErr = e.name === 'AbortError' ? new Error('서버 응답 지연(15초 초과)') : e;
+      if (i < tries - 1) await new Promise(r => setTimeout(r, 800 * Math.pow(2, i)));  // 0.8s → 1.6s → 3.2s
+    }
+  }
+  throw lastErr;
+}
+
 async function loadHistory() {
   const tbody = document.getElementById('historyBody');
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-    const res = await fetch(`${APPS_SCRIPT_URL}?type=criteria&action=history`, { signal: controller.signal });
-    clearTimeout(timeout);
-    if (!res.ok) throw new Error(`서버 응답 오류 (HTTP ${res.status})`);
-    const list = await res.json();
+    const list = await fetchJsonWithRetry(`${APPS_SCRIPT_URL}?type=criteria&action=history`);
     if (!Array.isArray(list)) throw new Error('응답 형식이 올바르지 않습니다');
     if (!list.length) {
       tbody.innerHTML = '<tr><td colspan="5" style="color:var(--stone)">아직 저장된 기준이 없습니다.</td></tr>';
@@ -515,8 +532,7 @@ function verdictTagHtml(decision) {
 async function loadDecisionsHistory() {
   const tbody = document.getElementById('historyDecisionsBody');
   try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?type=decisions&action=all`);
-    const raw = await res.json();
+    const raw = await fetchJsonWithRetry(`${APPS_SCRIPT_URL}?type=decisions&action=all`);
     // 초기 테스트 잔재 제외: 유효한 판정값이 아니거나 itemName이 'test'인 행은 숨김
     const VALID = ['증액', '감액', '유지', 'OFF', '보류'];
     const list = (Array.isArray(raw) ? raw : []).filter(it => VALID.includes(it.decision) && it.itemName !== 'test');
@@ -537,7 +553,8 @@ async function loadDecisionsHistory() {
       </tr>
     `).join('');
   } catch (e) {
-    tbody.innerHTML = '<tr><td colspan="8" style="color:var(--critical)">이력을 불러오지 못했습니다.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="8" style="color:var(--critical)">이력을 불러오지 못했습니다 (${e.message}). 저장된 데이터가 사라진 것은 아니며 서버 일시 오류입니다.
+      <button type="button" onclick="loadDecisionsHistory()" style="margin-left:8px;background:none;border:1px solid var(--hairline);border-radius:var(--r-full);padding:4px 12px;font-size:12px;font-family:var(--font);color:var(--steel);cursor:pointer;">다시 시도</button></td></tr>`;
   }
 }
 
