@@ -162,8 +162,98 @@
     .card { padding: 20px; }
   }
 </style>
+<style>
+  #authGate {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--canvas);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font);
+  }
+  #authGate.hidden { display: none; }
+  .auth-box {
+    width: 100%; max-width: 340px; padding: 32px 28px;
+    border: 1px solid var(--hairline); border-radius: var(--r-xl);
+    box-shadow: 0 4px 24px rgba(10,19,23,0.08);
+  }
+  .auth-box .brand-chip { margin-bottom: 18px; }
+  .auth-box h2 { font-size: 20px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .auth-box p.hint { color: var(--steel); font-size: 13px; margin: 0 0 20px; }
+  .auth-field { margin-bottom: 12px; }
+  .auth-field label { display: block; font-size: 12px; font-weight: 700; color: var(--slate); margin-bottom: 6px; }
+  .auth-field input {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--hairline);
+    border-radius: var(--r-lg); font-family: var(--font); font-size: 14px;
+    color: var(--ink); background: var(--canvas);
+  }
+  .auth-field input:focus { outline: none; border-color: var(--primary); }
+  #authSubmit {
+    width: 100%; margin-top: 6px; padding: 11px; border: none;
+    border-radius: var(--r-full); background: var(--ink-deep); color: var(--canvas);
+    font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  #authSubmit:hover { background: var(--primary-deep); }
+  #authError {
+    display: none; color: var(--critical); font-size: 13px; margin-top: 10px;
+  }
+</style>
 </head>
 <body>
+<div id="authGate">
+  <div class="auth-box">
+    <div class="brand-chip"><span class="dot"></span>Meta 협력광고</div>
+    <h2>로그인이 필요합니다</h2>
+    <p class="hint">담당자만 접근할 수 있는 페이지입니다.</p>
+    <div class="auth-field">
+      <label>아이디</label>
+      <input type="text" id="authId" autocomplete="username">
+    </div>
+    <div class="auth-field">
+      <label>비밀번호</label>
+      <input type="password" id="authPw" autocomplete="current-password">
+    </div>
+    <button id="authSubmit">로그인</button>
+    <div id="authError">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+  </div>
+</div>
+<script>
+(function () {
+  var ID_HASH = '37327da4c2790f0615824481812568aeb05f099a65290840bf23ba603d4e3a6d';
+  var PW_HASH = 'c05823a41650e3deaf2e05a911fa7f5d5d9bb95cbd7956d41b00a69a2983a738';
+  var STORAGE_KEY = 'mb_authed';
+
+  function sha256Hex(text) {
+    var enc = new TextEncoder().encode(text);
+    return crypto.subtle.digest('SHA-256', enc).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+    });
+  }
+
+  var gate = document.getElementById('authGate');
+  if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+    gate.classList.add('hidden');
+  }
+
+  document.getElementById('authSubmit').addEventListener('click', function () {
+    var idVal = document.getElementById('authId').value.trim();
+    var pwVal = document.getElementById('authPw').value;
+    Promise.all([sha256Hex(idVal), sha256Hex(pwVal)]).then(function (hashes) {
+      if (hashes[0] === ID_HASH && hashes[1] === PW_HASH) {
+        sessionStorage.setItem(STORAGE_KEY, '1');
+        gate.classList.add('hidden');
+        document.getElementById('authError').style.display = 'none';
+      } else {
+        document.getElementById('authError').style.display = 'block';
+      }
+    });
+  });
+
+  document.getElementById('authPw').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('authSubmit').click();
+  });
+})();
+</script>
 <div class="wrap">
   <div class="brand-chip"><span class="dot"></span>Meta 협력광고</div>
   <h1>예산 제안 콘솔</h1>
